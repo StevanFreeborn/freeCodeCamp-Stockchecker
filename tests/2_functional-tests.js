@@ -6,8 +6,35 @@ const server = require('../server');
 chai.use(chaiHttp);
 
 suite('Functional Tests', () => {
-    test('Can get one stock.', done => {
 
+    const testStockOneName = 'vti'
+
+    test('Can get one stock.', done => {
+        chai.request(server)
+        .get('/api/stock-prices')
+        .query({ stock: testStockOneName})
+        .end((err, res) => {
+            if (err) console.log(err)
+
+            assert.equal(res.status, 200);
+            assert.equal(res.type, 'application/json');
+
+            const stockRes = res.body;
+
+            assert.isObject(stockRes);
+            assert.property(stockRes, 'stockData');
+
+            const stockData = stockRes?.stockData;
+            
+            assert.property(stockData, 'stock');
+            assert.isString(stockData?.stock);
+            
+            assert.property(stockData, 'price');
+            assert.isNumber(stockData?.price);
+            
+            assert.property(stockData, 'likes');
+            assert.isNumber(stockData?.likes);
+        });
     });
 
     test('Can get one stock and like the stock.', done => {
