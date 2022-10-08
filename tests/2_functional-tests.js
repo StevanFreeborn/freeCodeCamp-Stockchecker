@@ -2,12 +2,14 @@ const chaiHttp = require('chai-http');
 const chai = require('chai');
 const assert = chai.assert;
 const server = require('../server');
+const StockAsserter = require('../assertionHelpers/stockAsserter');
 
 chai.use(chaiHttp);
 
 suite('Functional Tests', () => {
 
     const testStockOneName = 'vti'
+    const stockAsserter = new StockAsserter();
 
     test('Can get one stock.', done => {
         chai.request(server)
@@ -16,24 +18,8 @@ suite('Functional Tests', () => {
         .end((err, res) => {
             if (err) console.log(err)
 
-            assert.equal(res.status, 200);
-            assert.equal(res.type, 'application/json');
-
-            const stockRes = res.body;
-
-            assert.isObject(stockRes);
-            assert.property(stockRes, 'stockData');
-
-            const stockData = stockRes?.stockData;
-            
-            assert.property(stockData, 'stock');
-            assert.isString(stockData?.stock);
-            
-            assert.property(stockData, 'price');
-            assert.isNumber(stockData?.price);
-            
-            assert.property(stockData, 'likes');
-            assert.isNumber(stockData?.likes);
+            stockAsserter.assertIsValidSingleStockResponse(res);
+            stockAsserter.assertIsValidStock(res.body?.stockData);
 
             done();
         });
@@ -57,28 +43,13 @@ suite('Functional Tests', () => {
             .end((err, res) => {
                 if (err) console.log(err)
 
-                assert.equal(res.status, 200);
-                assert.equal(res.type, 'application/json');
-    
-                const stockRes = res.body;
+                stockAsserter.assertIsValidSingleStockResponse(res);
 
-                assert.isObject(stockRes);
-                assert.property(stockRes, 'stockData');
-    
-                const stockData = stockRes?.stockData;
-                
-                assert.property(stockData, 'stock');
-                assert.isString(stockData?.stock);
-                
-                assert.property(stockData, 'price');
-                assert.isNumber(stockData?.price);
-                
-                assert.property(stockData, 'likes');
-                assert.isNumber(stockData?.likes);
-                
-                const newLikeCount = stockData?.likes;
+                const stockData = res.body?.stockData;
 
-                assert.equal(newLikeCount, originalLikeCount + 1);
+                stockAsserter.assertIsValidStock(stockData);
+                
+                assert.equal(stockData?.likes, originalLikeCount + 1);
 
                 done();
             })
