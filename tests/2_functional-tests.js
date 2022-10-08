@@ -34,11 +34,55 @@ suite('Functional Tests', () => {
             
             assert.property(stockData, 'likes');
             assert.isNumber(stockData?.likes);
+
+            done();
         });
     });
 
     test('Can get one stock and like the stock.', done => {
+        chai.request(server)
+        .get('/api/stock-prices')
+        .query({ stock: testStockOneName})
+        .end((err, res) => {
+            if (err) console.log(err)
+            
+            const originalLikeCount = res.body?.stockData?.likes;
 
+            chai.request(server)
+            .get('/api/stock-prices')
+            .query({ 
+                stock: testStockOneName,
+                like: true,
+            })
+            .end((err, res) => {
+                if (err) console.log(err)
+
+                assert.equal(res.status, 200);
+                assert.equal(res.type, 'application/json');
+    
+                const stockRes = res.body;
+
+                assert.isObject(stockRes);
+                assert.property(stockRes, 'stockData');
+    
+                const stockData = stockRes?.stockData;
+                
+                assert.property(stockData, 'stock');
+                assert.isString(stockData?.stock);
+                
+                assert.property(stockData, 'price');
+                assert.isNumber(stockData?.price);
+                
+                assert.property(stockData, 'likes');
+                assert.isNumber(stockData?.likes);
+                
+                const newLikeCount = stockData?.likes;
+
+                assert.equal(newLikeCount, originalLikeCount + 1);
+
+                done();
+            })
+        });
     });
 
     test('Can\'t like same stock twice', done => {
