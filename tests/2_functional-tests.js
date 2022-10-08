@@ -8,18 +8,32 @@ chai.use(chaiHttp);
 
 suite('Functional Tests', () => {
 
-    const testStockOneName = 'vti'
+    const testStockOneName = 'vti';
     const stockAsserter = new StockAsserter();
 
-    test('Can get one stock.', done => {
+    test('Can get one stock.', (done) => {
         chai.request(server)
         .get('/api/stock-prices')
         .query({ stock: testStockOneName})
         .end((err, res) => {
             if (err) console.log(err)
+            
+            assert.equal(res.status, 200);
+            assert.equal(res.type, 'application/json');
+            
+            assert.isObject(res.body);
+            assert.property(res.body, 'stockData');
 
-            stockAsserter.assertIsValidSingleStockResponse(res);
-            stockAsserter.assertIsValidStock(res.body?.stockData);
+            const stockData = res.body?.stockData;
+
+            assert.property(stockData, 'stock');
+            assert.isString(stockData?.stock);
+
+            assert.property(stockData, 'price');
+            assert.isNumber(stockData?.price);
+
+            assert.property(stockData, 'likes');
+            assert.isNumber(stockData?.likes);
 
             done();
         });
@@ -31,7 +45,6 @@ suite('Functional Tests', () => {
         .query({ stock: testStockOneName})
         .end((err, res) => {
             if (err) console.log(err)
-            
             const originalLikeCount = res.body?.stockData?.likes;
 
             chai.request(server)
@@ -43,28 +56,42 @@ suite('Functional Tests', () => {
             .end((err, res) => {
                 if (err) console.log(err)
 
-                stockAsserter.assertIsValidSingleStockResponse(res);
-
+                assert.equal(res.status, 200);
+                assert.equal(res.type, 'application/json');
+                
+                assert.isObject(res.body);
+                assert.property(res.body, 'stockData');
+                
                 const stockData = res.body?.stockData;
-
-                stockAsserter.assertIsValidStock(stockData);
+    
+                assert.property(stockData, 'stock');
+                assert.isString(stockData?.stock);
+    
+                assert.property(stockData, 'price');
+                assert.isNumber(stockData?.price);
+    
+                assert.property(stockData, 'likes');
+                assert.isNumber(stockData?.likes);
                 
                 assert.equal(stockData?.likes, originalLikeCount + 1);
-
+                
                 done();
             })
         });
     });
 
-    test('Can\'t like same stock twice', done => {
-
+    test('Cant like same stock twice', done => {
+        assert.fail();
+        done();
     });
 
     test('Can get two stocks.', done => {
-
+        assert.fail();
+        done();
     });
 
     test('Can get two stocks and like both stocks.', done => {
-
+        assert.fail();
+        done();
     });
 });
