@@ -1,7 +1,7 @@
 {
-	"name": "boilerplate-project-stockchecker",
-	"version": "0.0.1",
-	"description": "InfoSec project for freeCodeCamp",
+	"name": "stock-price-checker",
+	"version": "1.0.0",
+	"description": "A stock price checker built as part of the freeCodeCamp Information Security Certification.",
 	"scripts": {
 		"dev": "nodemon server.js",
 		"start": "node server.js"
@@ -19,11 +19,15 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/freeCodeCamp/boilerplate-project-stockchecker"
+		"url": "https://github.com/StevanFreeborn/freeCodeCamp-Stockchecker"
 	},
 	"keywords": [
 		"node",
-		"express"
+		"express",
+		"freeCodeCamp",
+		"stock",
+		"price",
+		"checker"
 	],
 	"license": "MIT"
 }
