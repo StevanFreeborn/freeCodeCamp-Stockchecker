@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const helmet = require('helmet');
 
-const apiRoutes = require('./routes/api.js');
+const stockRoutes = require('./routes/stocks');
 const fccTestingRoutes = require('./routes/fcctesting.js');
 const runner = require('./test-runner');
 
@@ -33,7 +33,7 @@ app.route('/')
 
 fccTestingRoutes(app);
 
-apiRoutes(app);
+stockRoutes(app);
 
 app.use((req, res, next) => {
   res.status(404)
