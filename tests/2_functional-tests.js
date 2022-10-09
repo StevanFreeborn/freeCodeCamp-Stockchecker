@@ -2,14 +2,12 @@ const chaiHttp = require('chai-http');
 const chai = require('chai');
 const assert = chai.assert;
 const server = require('../server');
-const StockAsserter = require('../assertionHelpers/stockAsserter');
 
 chai.use(chaiHttp);
 
 suite('Functional Tests', () => {
 
     const testStockOneName = 'vti';
-    const stockAsserter = new StockAsserter();
 
     test('Can get one stock.', (done) => {
         chai.request(server)
