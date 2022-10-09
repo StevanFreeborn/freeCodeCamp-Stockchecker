@@ -79,8 +79,47 @@ suite('Functional Tests', () => {
     });
 
     test('Cant like same stock twice', done => {
-        assert.fail();
-        done();
+        chai.request(server)
+        .get('/api/stock-prices')
+        .query({ 
+            stock: testStockOneName,
+            like: true
+        })
+        .end((err, res) => {
+            if (err) console.log(err)
+            const originalLikeCount = res.body?.stockData?.likes;
+
+            chai.request(server)
+            .get('/api/stock-prices')
+            .query({ 
+                stock: testStockOneName,
+                like: true,
+            })
+            .end((err, res) => {
+                if (err) console.log(err)
+
+                assert.equal(res.status, 200);
+                assert.equal(res.type, 'application/json');
+                
+                assert.isObject(res.body);
+                assert.property(res.body, 'stockData');
+                
+                const stockData = res.body?.stockData;
+    
+                assert.property(stockData, 'stock');
+                assert.isString(stockData?.stock);
+    
+                assert.property(stockData, 'price');
+                assert.isNumber(stockData?.price);
+    
+                assert.property(stockData, 'likes');
+                assert.isNumber(stockData?.likes);
+                
+                assert.equal(stockData?.likes, originalLikeCount);
+                
+                done();
+            })
+        });
     });
 
     test('Can get two stocks.', done => {
