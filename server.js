@@ -33,7 +33,6 @@ app.route('/')
   });
 
 fccTestingRoutes(app);
-stockRoutes(app);
 
 app.use((req, res, next) => {
   res.status(404)
@@ -59,6 +58,8 @@ mongoose
 .connect(mongoConnectionString, { useNewUrlParser: true, useUnifiedTopology: true })
 .then(() => {
   console.log(`Mongoose connected successfully to ${process.env.NODE_ENV} database.`);
+
+  stockRoutes(app);
 
   if (process.env.NODE_ENV === 'test') {
     console.log('Running Tests...');
