@@ -1,18 +1,31 @@
 const Stock = require('../models/stock'); 
 
 class StockService {
-    getStocksBySymbol = async (stocksPriceData) => {
+    getStocksBySymbol = async (stocksPriceData, isLiked, requestIp) => {
         return await Promise.all(stocksPriceData.map(async (stockPriceData) => {
-            const stock = await this.getStockBySymbol(stockPriceData?.symbol)
-
             try {
-                if (!stock) {
-                    return await this.createStock(stockPriceData);
+                const stock = await this.getStockBySymbol(stockPriceData?.symbol);
+
+                if (stock == null) {
+                    if (isLiked == true) {
+                        stockPriceData.likes = [requestIp];
+                    }
+                    
+                    return this.createStock(stockPriceData);
                 }
                 else {
-                    return await this.updateStock(stock, stockPriceData);
+                    const hasAlreadyLiked = stock.likes.includes(requestIp);
+    
+                    if (isLiked == true && hasAlreadyLiked == false) {
+                        stockPriceData.$push = {
+                            likes: requestIp,
+                        };
+                    }
+    
+                    return this.updateStock(stock, stockPriceData);
                 }
-            } catch (error) {
+            }
+            catch (error) {
                 console.log(error);
             }
         }));
@@ -20,18 +33,16 @@ class StockService {
 
     getStockBySymbol = async (stockSymbol) => {
         try {
-            return await Stock.findOne({ stock: stockSymbol, }).exec()
+            return await Stock.findOne({ symbol: stockSymbol, }).exec()
         } 
         catch (error) {
-            console.log(error);    
+            console.log(error);
         }
     };
 
     createStock = async (stockPriceData) => {
-        // TODO: Implement creating stock in database.
         try {
             const newStock = new Stock(stockPriceData);
-            newStock.stock = stockPriceData?.symbol;
             return await newStock.save();
         } 
         catch (error) {
@@ -40,13 +51,9 @@ class StockService {
     };
 
     updateStock = async (existingStock, newStockData) => {
-        // TODO: Implement updating stock in database.
         try {
             const updateOptions = { new: true, };
-
-            const updates = { ...newStockData };
-            
-            return await Stock.findByIdAndUpdate(existingStock.id, updates, updateOptions).exec();
+            return await Stock.findByIdAndUpdate(existingStock.id, newStockData, updateOptions).exec();
         }
         catch (error) {
             console.log(error);

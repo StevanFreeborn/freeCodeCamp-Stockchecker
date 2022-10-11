@@ -2,13 +2,18 @@ const chaiHttp = require('chai-http');
 const chai = require('chai');
 const assert = chai.assert;
 const server = require('../server');
+const { before } = require('mocha');
+const Stock = require('../models/stock');
 
 chai.use(chaiHttp);
 
 suite('Functional Tests', () => {
+    before(async () => {
+        await Stock.deleteMany({}).exec();
+    });
 
-    const testStockOneName = 'vti';
-    const testStockTwoName = 'vtsax';
+    const testStockOneName = 'msft';
+    const testStockTwoName = 'goog';
 
     test('Can get one stock.', (done) => {
         chai.request(server)
@@ -125,11 +130,7 @@ suite('Functional Tests', () => {
 
     test('Can get two stocks.', done => {
         chai.request(server)
-        .get('/api/stock-prices')
-        .query({ 
-            stock: testStockOneName,
-            stock: testStockTwoName,
-        })
+        .get(`/api/stock-prices?stock=${testStockOneName}&stock=${testStockTwoName}`)
         .end((err, res) => {
             if (err) console.log(err)
             
@@ -151,8 +152,8 @@ suite('Functional Tests', () => {
                 assert.property(stock, 'price');
                 assert.isNumber(stock?.price);
     
-                assert.property(stock, 'likes');
-                assert.isNumber(stock?.likes);
+                assert.property(stock, 'rel_likes');
+                assert.isNumber(stock?.rel_likes);
             })
 
             done();
@@ -161,23 +162,14 @@ suite('Functional Tests', () => {
 
     test('Can get two stocks and like both stocks.', done => {
         chai.request(server)
-        .get('/api/stock-prices')
-        .query({ 
-            stock: testStockOneName,
-            stock: testStockTwoName,
-        })
+        .get(`/api/stock-prices?stock=${testStockOneName}&stock=${testStockTwoName}`)
         .end((err, res) => {
             if (err) console.log(err)
-            const firstStockOriginalLikes = res.body?.stockData[0]?.likes;
-            const secondStockOriginalLikes = res.body?.stockData[1]?.likes;
+            const firstStockOriginalLikes = res.body?.stockData[0]?.rel_likes;
+            const secondStockOriginalLikes = res.body?.stockData[1]?.rel_likes;
 
             chai.request(server)
-            .get('/api/stock-prices')
-            .query({ 
-                stock: testStockOneName,
-                stock: testStockTwoName,
-                like: true,
-            })
+            .get(`/api/stock-prices?stock=${testStockOneName}&stock=${testStockTwoName}&like=true`)
             .end((err, res) => {
                 if (err) console.log(err)
 
@@ -199,12 +191,12 @@ suite('Functional Tests', () => {
                     assert.property(stock, 'price');
                     assert.isNumber(stock?.price);
         
-                    assert.property(stock, 'likes');
-                    assert.isNumber(stock?.likes);
+                    assert.property(stock, 'rel_likes');
+                    assert.isNumber(stock?.rel_likes);
                 })
-                
-                assert.equal(stockData[0]?.likes, firstStockOriginalLikes + 1);
-                assert.equal(stockData[1]?.likes, secondStockOriginalLikes + 1);
+
+                assert.equal(stockData[0]?.rel_likes, 0);
+                assert.equal(stockData[1]?.rel_likes, 0);
                 
                 done();
             })

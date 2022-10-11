@@ -4,7 +4,6 @@ const stockSchemaOptions = {
     timestamps: true,
 }
 const StockSchema = mongoose.Schema({
-    stock: { type: String, trim: true},
     likes: [String],
     avgTotalVolume: { type: Number, },
     calculationPrice: { type: String, trim: true, },
