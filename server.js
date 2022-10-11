@@ -9,7 +9,6 @@ const mongoose = require('mongoose');
 const stockRoutes = require('./routes/stocks');
 const fccTestingRoutes = require('./routes/fcctesting.js');
 const runner = require('./test-runner');
-const { default: mongoose } = require('mongoose');
 
 const app = express();
 
@@ -42,8 +41,6 @@ app.use((req, res, next) => {
     .send('Not Found');
 });
 
-// TODO: Connect to database on start-up.
-
 let mongoConnectionString; 
 
 switch (process.env.NODE_ENV) {
@@ -61,15 +58,8 @@ switch (process.env.NODE_ENV) {
 mongoose
 .connect(mongoConnectionString, { useNewUrlParser: true, useUnifiedTopology: true })
 .then(() => {
-  console.log(`Mongoose connected successfully to ${proccess.env.NODE_ENV} database.`);
-})
-.catch(() => {
+  console.log(`Mongoose connected successfully to ${process.env.NODE_ENV} database.`);
 
-});
-
-const listener = app.listen(process.env.PORT || 3000, () => {
-  console.log('Your app is listening on port ' + listener.address().port);
-  
   if (process.env.NODE_ENV === 'test') {
     console.log('Running Tests...');
     
@@ -82,6 +72,17 @@ const listener = app.listen(process.env.PORT || 3000, () => {
       }
     }, 3500);
   }
+})
+.catch(error => {
+  console.log(error);
+
+  app.use((req, res, next) => {
+    res.sendFile(process.cwd() + '/views/error.html')
+  });
+});
+
+const listener = app.listen(process.env.PORT || 3000, () => {
+  console.log('Your app is listening on port ' + listener.address().port);
 });
 
 module.exports = app;
