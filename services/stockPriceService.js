@@ -25,12 +25,8 @@ class StockPriceChekcer {
             stocks = [stocks];
         }
 
-        return await Promise.all(stocks.map(async (stock) => {
-            try {
-                return await this.getStockPrice(stock);
-            } catch (error) {
-                return console.log(error);
-            }
+        return await Promise.all(stocks.map((stock) => {
+                return this.getStockPrice(stock);
         }));
     }
 }

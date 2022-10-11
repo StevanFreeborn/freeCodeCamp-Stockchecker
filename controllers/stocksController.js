@@ -17,10 +17,10 @@ const createDoubleStockDto = stocks => {
         let rel_likes;
 
         if (index == 0) {
-            rel_likes = stocks[0]?.likes.length -  stocks[1]?.likes.length;
+            rel_likes = stocks[0]?.likes.length - stocks[1]?.likes.length;
         }
         else {
-            rel_likes = stocks[1]?.likes.length -  stocks[0]?.likes.length;
+            rel_likes = stocks[1]?.likes.length - stocks[0]?.likes.length;
         }
 
         return {
@@ -36,32 +36,35 @@ class StocksController {
         let stockSymbols = req.query?.stock;
         let isLiked = req.query?.like === 'true';
         let requestIp = req.ip;
-        
+
         if (!stockSymbols) {
             return res
-            .status(400)
-            .json({
-                error: 'Please provide a stock symbol.'
-            });
+                .status(400)
+                .json({
+                    error: 'Please provide a stock symbol.'
+                });
         }
+        try {
+            const stocksPriceData = await stockPriceService.getStockPrices(stockSymbols);
 
-        const stocksPriceData = await stockPriceService.getStockPrices(stockSymbols);
+            let stocks = await stockService.getStocksBySymbol(stocksPriceData, isLiked, requestIp);
 
-        let stocks = await stockService.getStocksBySymbol(stocksPriceData, isLiked, requestIp);
-        
-        if (stocks.length == 1) {
-            stocks = createSingleStockDto(stocks[0]);
+            if (stocks.length == 1) {
+                stocks = createSingleStockDto(stocks[0]);
+            }
+
+            if (stocks.length == 2) {
+                stocks = createDoubleStockDto(stocks);
+            }
+
+            return res
+                .status(200)
+                .json({
+                    stockData: stocks,
+                });
+        } catch (error) {
+            console.log(error);
         }
-        
-        if (stocks.length == 2) {
-            stocks = createDoubleStockDto(stocks);
-        }
-
-        return res
-        .status(200)
-        .json({
-            stockData: stocks,
-        });
     }
 }
 
