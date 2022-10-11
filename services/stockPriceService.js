@@ -6,7 +6,7 @@ class StockPriceChekcer {
     getStockPriceUrl = (stock) => {
         const endpoint = this.stock_price_endpoint;
         return `${endpoint}/v1/stock/${stock}/quote`
-    }
+    };
 
     getStockPrice = async (stock) => {
         const url = this.getStockPriceUrl(stock);
@@ -18,7 +18,7 @@ class StockPriceChekcer {
         catch (error) {
             console.log(error);
         }
-    }
+    };
 }
 
 module.exports = StockPriceChekcer;

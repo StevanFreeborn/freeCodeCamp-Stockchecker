@@ -41,6 +41,8 @@ app.use((req, res, next) => {
     .send('Not Found');
 });
 
+// TODO: Connect to database on start-up.
+
 const listener = app.listen(process.env.PORT || 3000, () => {
   console.log('Your app is listening on port ' + listener.address().port);
   
