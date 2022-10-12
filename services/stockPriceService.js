@@ -10,21 +10,16 @@ class StockPriceChekcer {
 
     getStockPrice = async (stock) => {
         const url = this.getStockPriceUrl(stock);
-        try {
-            const res = await axios(url);
-            const data = res.data;
-            return data;
-        }
-        catch (error) {
-            console.log(error);
-        }
+        const res = await axios(url);
+        const data = res.data;
+        return data;
     }
 
     getStockPrices = async (stocks) => {
         if (!Array.isArray(stocks)) {
             stocks = [stocks];
         }
-
+        
         return await Promise.all(stocks.map((stock) => {
                 return this.getStockPrice(stock);
         }));

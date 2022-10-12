@@ -3,61 +3,41 @@ const Stock = require('../models/stock');
 class StockService {
     getStocksBySymbol = async (stocksPriceData, isLiked, requestIp) => {
         return await Promise.all(stocksPriceData.map(async (stockPriceData) => {
-            try {
-                const stock = await this.getStockBySymbol(stockPriceData?.symbol);
+            const stock = await this.getStockBySymbol(stockPriceData?.symbol);
 
-                if (stock == null) {
-                    if (isLiked == true) {
-                        stockPriceData.likes = [requestIp];
-                    }
-                    
-                    return this.createStock(stockPriceData);
+            if (stock == null) {
+                if (isLiked == true) {
+                    stockPriceData.likes = [requestIp];
                 }
-                else {
-                    const hasAlreadyLiked = stock.likes.includes(requestIp);
-    
-                    if (isLiked == true && hasAlreadyLiked == false) {
-                        stockPriceData.$push = {
-                            likes: requestIp,
-                        };
-                    }
-    
-                    return this.updateStock(stock, stockPriceData);
-                }
+
+                return this.createStock(stockPriceData);
             }
-            catch (error) {
-                console.log(error);
+            else {
+                const hasAlreadyLiked = stock.likes.includes(requestIp);
+
+                if (isLiked == true && hasAlreadyLiked == false) {
+                    stockPriceData.$push = {
+                        likes: requestIp,
+                    };
+                }
+
+                return this.updateStock(stock, stockPriceData);
             }
         }));
     }
 
     getStockBySymbol = async (stockSymbol) => {
-        try {
-            return await Stock.findOne({ symbol: stockSymbol, }).exec()
-        } 
-        catch (error) {
-            console.log(error);
-        }
+        return await Stock.findOne({ symbol: stockSymbol, }).exec()
     };
 
     createStock = async (stockPriceData) => {
-        try {
-            const newStock = new Stock(stockPriceData);
-            return await newStock.save();
-        } 
-        catch (error) {
-            console.log(error);
-        }
+        const newStock = new Stock(stockPriceData);
+        return await newStock.save();
     };
 
     updateStock = async (existingStock, newStockData) => {
-        try {
-            const updateOptions = { new: true, };
-            return await Stock.findByIdAndUpdate(existingStock.id, newStockData, updateOptions).exec();
-        }
-        catch (error) {
-            console.log(error);
-        }
+        const updateOptions = { new: true, };
+        return await Stock.findByIdAndUpdate(existingStock.id, newStockData, updateOptions).exec();
     };
 }
 

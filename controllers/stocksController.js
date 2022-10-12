@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const StockPriceService = require('../services/stockPriceService');
 const StockService = require('../services/stockService');
 
@@ -44,6 +45,7 @@ class StocksController {
                     error: 'Please provide a stock symbol.'
                 });
         }
+
         try {
             const stocksPriceData = await stockPriceService.getStockPrices(stockSymbols);
 
@@ -62,8 +64,15 @@ class StocksController {
                 .json({
                     stockData: stocks,
                 });
-        } catch (error) {
+        } 
+        catch (error) {
             console.log(error);
+            
+            return res
+            .status(500)
+            .json({
+                error: "We're sorry there was an error.",
+            });
         }
     }
 }
