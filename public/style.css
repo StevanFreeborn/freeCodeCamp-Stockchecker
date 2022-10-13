@@ -12,7 +12,6 @@
  * Copyright 2011-2022 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
-@import url("https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap");
 :root {
   --bs-blue: #b58900;
   --bs-indigo: #6610f2;
@@ -92,6 +91,15 @@
   :root {
     scroll-behavior: smooth;
   }
+}
+
+html,
+body {
+  min-height: 100vh;
+}
+
+max-width-720 {
+  max-width: 720px;
 }
 
 body {
@@ -8003,6 +8011,10 @@ textarea.form-control-lg {
 
 .font-monospace {
   font-family: var(--bs-font-monospace) !important;
+}
+
+.fs-0 {
+  font-size: calc(4rem + 4vw) !important;
 }
 
 .fs-1 {

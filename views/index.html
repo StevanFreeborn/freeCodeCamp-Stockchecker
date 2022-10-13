@@ -10,32 +10,72 @@
   </head>
   <body>
 
-    <div class="container">
-
-      <div>
-        <h1>Simple Stock Price Checker</h1>
-      </div>
-
-      <div id="testui">
-
-        <form id="get-stock-form">
-          <div class="row">
-            <div class="col">
-              <div class="form-group">
-                <div class="form-floating">
-                  <input id="stock" class="form-control" type="text" name="stock" placeholder="GOOG" required="true" />
-                  <label for="stock">Stock</label>
+    <div class="d-flex flex-column min-vh-100">
+      <div class="container-sm my-auto max-width-720">
+        <div class="card">
+          <div class="card-header">
+            <div class="row text-center">
+              <div class="col">
+                <h1>Simple Stock Price Checker</h1>
+              </div>
+            </div>
+            <div class="row align-items-center">
+              <div class="col">
+                <form id="get-stock-form">
+                  <div class="row">
+                    <div class="col-8">
+                      <div class="form-group">
+                        <div class="form-floating">
+                          <input id="stock" class="form-control" type="text" name="stock" placeholder="GOOG" required="true" />
+                          <label for="stock">Stock</label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-4 d-grid">
+                        <button class="btn btn-info" type="submit">Check Price</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="container-sm">
+              <div class="row">
+                <div class="col d-flex flex-row flex-wrap align-items-center justify-content-center justify-content-md-start">
+                  <h1 id="stock-symbol" class="card-title me-3">
+                    VTI
+                  </h1>
+                  <div id="company-name" class="card-text">
+                    Vanguard Group, Inc. - Vanguard Total Stock Market ETF
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col text-center">
+                  <div id="stock-price" class="text-info fs-0">
+                    181.42
+                  </div>
                 </div>
               </div>
             </div>
-            <div class="col">
-              <button class="btn btn-info" type="submit">Get Price!</button>
+          </div>
+          <div class="card-footer">
+            <div class="row">
+              <div class="col d-flex justify-content-start">
+                <div class="card-text">
+                  Latest Update: <span id="latest-update-time" class="text-info">10/13/2022, 10:22:46 AM</span>
+                </div>
+              </div>
+              <div class="col d-flex justify-content-end">
+                <div>
+                  Lastest Source: <span id="latest-source" class="text-info">IEX real time price</span>
+                </div>
+              </div>
             </div>
           </div>
-        </form>
-  
+        </div>
       </div>
-
     </div>
 
 
