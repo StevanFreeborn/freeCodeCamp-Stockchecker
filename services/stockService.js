@@ -1,23 +1,28 @@
-const Stock = require('../models/stock'); 
+const bcrypt = require('bcrypt');
+const Stock = require('../models/stock');
 
 class StockService {
     getStocksBySymbol = async (stocksPriceData, isLiked, requestIp) => {
         return await Promise.all(stocksPriceData.map(async (stockPriceData) => {
             const stock = await this.getStockBySymbol(stockPriceData?.symbol);
+            const saltRounds = 10;
+            const hashedIp = await bcrypt.hash(requestIp, saltRounds);
 
             if (stock == null) {
                 if (isLiked == true) {
-                    stockPriceData.likes = [requestIp];
+                    stockPriceData.likes = [hashedIp];
                 }
 
                 return this.createStock(stockPriceData);
             }
             else {
-                const hasAlreadyLiked = stock.likes.includes(requestIp);
+                const hasAlreadyLiked = stock.likes.some(like => {
+                    return bcrypt.compareSync(requestIp, like);
+                });
 
                 if (isLiked == true && hasAlreadyLiked == false) {
                     stockPriceData.$push = {
-                        likes: requestIp,
+                        likes: hashedIp,
                     };
                 }
 

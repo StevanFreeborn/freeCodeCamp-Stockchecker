@@ -8,7 +8,7 @@ const Stock = require('../models/stock');
 chai.use(chaiHttp);
 
 suite('Functional Tests', () => {
-    before(async () => {
+    after(async () => {
         await Stock.deleteMany({}).exec();
     });
 
