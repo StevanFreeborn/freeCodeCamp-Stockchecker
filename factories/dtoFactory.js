@@ -3,6 +3,9 @@ const createSingleStockDto = stock => {
         stock: stock?.symbol,
         price: stock?.latestPrice,
         likes: stock?.likes.length,
+        companyName: stock?.companyName,
+        latestSource: stock?.latestSource,
+        latestUpdate: stock?.latestUpdate,
     }
 }
 
