@@ -14,6 +14,7 @@ suite('Functional Tests', () => {
 
     const testStockOneName = 'msft';
     const testStockTwoName = 'goog';
+    const invalidStock = 'test';
 
     test('Can get one stock.', (done) => {
         chai.request(server)
@@ -200,6 +201,24 @@ suite('Functional Tests', () => {
                 
                 done();
             })
+        });
+    });
+
+    test('return 404 error if invalid stock symbol requested', done => {
+        chai.request(server)
+        .get('/api/stock-prices')
+        .query({ stock: invalidStock})
+        .end((err, res) => {
+            if (err) console.log(err)
+            
+            assert.equal(res.status, 404);
+            assert.equal(res.type, 'application/json');
+            
+            assert.isObject(res.body);
+            assert.property(res.body, 'error');
+            assert.isString(res.body.error);
+
+            done();
         });
     });
 });

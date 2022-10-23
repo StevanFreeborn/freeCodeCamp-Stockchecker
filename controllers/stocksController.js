@@ -21,6 +21,18 @@ class StocksController {
 
         try {
             const stocksPriceData = await stockPriceService.getStockPrices(stockSymbols);
+            
+            for (let i = 0; i < stocksPriceData.length; i++) {
+                if (stocksPriceData[i].hasOwnProperty('error')) {
+                    if (stocksPriceData[i].error.includes('Unknown symbol')) {
+                        return res
+                        .status(404)
+                        .json({
+                            error: stocksPriceData[i].error,
+                        });
+                    }
+                }
+            }
 
             let stocks = await stockService.getStocksBySymbol(stocksPriceData, isLiked, requestIp);
 
