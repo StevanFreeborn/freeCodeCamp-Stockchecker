@@ -12,6 +12,13 @@ class StockPriceChekcer {
         const url = this.getStockPriceUrl(stock);
         const res = await axios(url);
         const data = res.data;
+
+        if (typeof data === 'string') {
+            return {
+                error: data + ' ' + stock,
+            };
+        }
+
         return data;
     }
 

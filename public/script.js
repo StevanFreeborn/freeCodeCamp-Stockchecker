@@ -4,6 +4,7 @@ const companyNameElement = document.getElementById('company-name');
 const stockPriceElement = document.getElementById('stock-price');
 const lastUpdateTimeElement = document.getElementById('latest-update-time');
 const lastSourceElement = document.getElementById('latest-source');
+const errorMessageElement = document.getElementById('error-message');
 
 window.onload = async (e) => {
 
@@ -13,8 +14,19 @@ window.onload = async (e) => {
 
   getStockFormElement.addEventListener('submit', async (e) => {
     e.preventDefault();
+
+    if (errorMessageElement.innerText) {
+      errorMessageElement.innerText = '';
+    }
+    
     const stockSymbol = e.target[0].value;
     const stock = await getStockPrice(stockSymbol);
+
+    if (stock.hasOwnProperty('error')) {
+      errorMessageElement.innerText = stock.error;
+      return resetStockInformation();
+    }
+
     updateStockInformation(stock);
   });
 }
@@ -31,4 +43,12 @@ const updateStockInformation = (stock) => {
   stockPriceElement.innerText = "$" + stock?.stockData?.price;
   lastUpdateTimeElement.innerText = new Date(stock?.stockData?.latestUpdate).toLocaleString();
   lastSourceElement.innerText = stock?.stockData?.latestSource;
+}
+
+const resetStockInformation = () => {
+  stockSymbolElement.innerText = '-';
+  companyNameElement.innerText = '';
+  stockPriceElement.innerText = '-';
+  lastUpdateTimeElement.innerText = '-';
+  lastSourceElement.innerText = '-';
 }
